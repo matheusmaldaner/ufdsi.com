@@ -1,9 +1,25 @@
+'use client';
+
+import { useState } from "react";
+import { Tab } from '@headlessui/react';
+
 type Person = {
   name: string;
   position?: string;
   linkedIn?: string;
   image?: string;
+  year?: string;
 };
+
+interface ExecBoard {
+  year: string;
+  displayName: string;
+  members: Person[];
+}
+
+function classNames(...classes: string[]) {
+  return classes.filter(Boolean).join(' ');
+}
 
 const PersonCard = ({ person }: { person: Person }) => (
   <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-xl group hover:translate-y-[-5px] w-full max-w-[280px]">
@@ -148,7 +164,60 @@ const juniorRoles: JuniorRole[] = [
   },
 ];
 
+const execBoards: ExecBoard[] = [
+  {
+    year: "2015-2016",
+    displayName: "2015-2016 Founding Board",
+    members: [
+      {
+        name: "Damiem Chamness",
+        position: "President/Founder (Fall)",
+        linkedIn: "https://www.linkedin.com/in/damiem/",
+        image: "/images/alumni/2015-2016/damiem_chamness.jpg",
+        year: "2015-2016"
+      },
+      {
+        name: "Jack Kendall",
+        position: "President (Spring)",
+        linkedIn: "https://www.linkedin.com/in/jack-kendall-2107287/",
+        image: "/images/alumni/2015-2016/jack_kendall.jpg",
+        year: "2015-2016"
+      },
+      {
+        name: "Nicolas Hureira",
+        position: "Vice President External",
+        linkedIn: "https://www.linkedin.com/in/nhureira/",
+        image: "/images/alumni/2015-2016/nicolas_hureira.jpg",
+        year: "2015-2016"
+      },
+      {
+        name: "Gavin O'Leary",
+        position: "Vice President Internal",
+        linkedIn: "https://www.linkedin.com/in/gavin-o-leary-a5788131/",
+        image: "/images/alumni/2015-2016/gavin_oleary.jpg",
+        year: "2015-2016"
+      },
+      {
+        name: "Talia Brown",
+        position: "Treasurer",
+        image: "/images/alumni/2015-2016/talia_brown.jpg",
+        year: "2015-2016"
+      },
+      {
+        name: "Ya Zhang",
+        position: "Secretary",
+        linkedIn: "https://www.linkedin.com/in/yazhang1/",
+        image: "/images/alumni/2015-2016/ya_zhang.jpg",
+        year: "2015-2016"
+      }
+    ]
+  },
+  // ... other exec boards data ...
+];
+
 const Team = () => {
+  const [selectedYear, setSelectedYear] = useState("2015-2016");
+
   return (
     <div className="bg-white dark:bg-gray-dark py-16">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -177,7 +246,7 @@ const Team = () => {
         </div>
 
         {/* Section for Junior Board */}
-        <div>
+        <div className="mb-24">
           <div className="text-center mb-16">
             <h3 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white inline-block relative">
               Junior E-Board
@@ -200,6 +269,67 @@ const Team = () => {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Section for Alumni */}
+        <div>
+          <div className="text-center mb-16">
+            <h3 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white inline-block relative">
+              Alumni Network
+              <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-teal-500 to-blue-500"></span>
+            </h3>
+            <p className="mt-4 text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              Meet the graduates and past executive boards who have shaped our organization.
+            </p>
+          </div>
+
+          <div className="mx-auto w-full max-w-5xl">
+            <Tab.Group selectedIndex={execBoards.findIndex(board => board.year === selectedYear)} onChange={index => setSelectedYear(execBoards[index].year)}>
+              <div className="mb-8 border-b border-gray-200 dark:border-gray-700">
+                <Tab.List className="flex overflow-x-auto space-x-1 p-1 scrollbar-hide">
+                  {execBoards.map((board) => (
+                    <Tab
+                      key={board.year}
+                      className={({ selected }) =>
+                        classNames(
+                          'py-3 px-4 text-sm font-medium whitespace-nowrap flex-shrink-0',
+                          'focus:outline-none',
+                          selected
+                            ? 'text-teal-600 border-b-2 border-teal-500 dark:text-teal-400 dark:border-teal-400'
+                            : 'text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-300'
+                        )
+                      }
+                    >
+                      {board.year}
+                    </Tab>
+                  ))}
+                </Tab.List>
+              </div>
+
+              <Tab.Panels>
+                {execBoards.map((board, idx) => (
+                  <Tab.Panel
+                    key={idx}
+                    className={classNames(
+                      'rounded-xl',
+                      'focus:outline-none'
+                    )}
+                  >
+                    <div className="mb-8">
+                      <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-8 text-center">
+                        {board.displayName}
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {board.members.map((member, index) => (
+                          <PersonCard key={`alumni-${board.year}-${index}`} person={member} />
+                        ))}
+                      </div>
+                    </div>
+                  </Tab.Panel>
+                ))}
+              </Tab.Panels>
+            </Tab.Group>
           </div>
         </div>
       </div>
